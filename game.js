@@ -5,23 +5,21 @@ let userClickedPattern = [];
 let level = 1;
 let idx = 0;
 
-function nextSequence() {
+async function nextSequence() {
     let randomNumber = Math.floor(Math.random() * 4);
     let randomChosenColor = buttonColors[randomNumber];
-    gamePattern.push(randomChosenColor);
-    playSound(randomChosenColor);
-    $(`#${randomChosenColor}`).fadeOut(90).fadeIn(90).fadeOut(90).fadeIn(90);
+    await addNewColorToPattern(randomChosenColor);
     level++;
 }
 
-$(document).keydown(function (event) {
+$(document).keydown(async function (event) {
     if (!capSKeyPressed) {
         if (event.key == 'S') {
             handleButtons("enable");
             restartGame();
             $("h1").text(`Level ${level}`).fadeOut(140).fadeIn(170);
             capSKeyPressed = true;
-            nextSequence();
+            await nextSequence();
         }
     }
 })
@@ -64,6 +62,18 @@ $(".btn").on("click", function () {
         }
     }
 })
+
+async function addNewColorToPattern(color) {
+    gamePattern.push(color);
+    for (const pattern of gamePattern) {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            playSound(pattern);
+            $(`#${pattern}`).fadeOut(90).fadeIn(90).fadeOut(90).fadeIn(90, resolve);
+          }, 300);
+        });
+    }
+}
 
 function playSound(name) {
     let audio = new Audio(`./sounds/${name}.mp3`);
