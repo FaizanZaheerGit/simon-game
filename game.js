@@ -14,7 +14,7 @@ async function nextSequence() {
 
 $(document).keydown(async function (event) {
     if (!capSKeyPressed) {
-        if (event.key == 'S') {
+        if (event.key == 'S' || event.key == 's') {
             handleButtons("enable");
             restartGame();
             $("h1").text(`Level ${level}`).fadeOut(140).fadeIn(170);
@@ -107,4 +107,25 @@ function handleButtons(action) {
         $(".btn").css("pointer-events", "none");
         $(".btn").css("cursor", "auto");
     }
+}
+
+$("body").on("onload", function() {
+    if (isMobileDevice()) {
+        openMobileKeypad();
+    }
+})
+
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function openMobileKeypad() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('id', 'sInput');
+    document.body.appendChild(input);
+    input.focus();
+    input.addEventListener('blur', function () {
+      this.remove();
+    });
 }
